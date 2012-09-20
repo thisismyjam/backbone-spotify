@@ -45,11 +45,17 @@ Spotify doesn't actually tell us whether the user used the back or forward butto
 
 To activate the history stack, you need to set a ``view`` property on your router which is a reference to the view for the current page. When you navigate to new page, this reference is stored in the stack.
 
+### Freezing and restoring views
+
 When a view is stored in the stack, a ``freeze`` method is called on the router and the view. (The router gets passed the view as an argument too.)
 
-Similarly, when a view is restored by hitting the back or forward button, a ``restore`` method is called on the router and the view. See the example app for how you can use these methods.
+Similarly, when a view is restored by hitting the back or forward button, a ``restore`` method is called on the router and the view. 
 
-This is a basic example of a router that can freeze and restore views:
+See the example app for how you can use these methods. Note that they get called **after** the URI is routed.
+
+### Example
+
+This is a basic example of a router that uses the history stack:
 
     var Router = BackboneSpotify.Router.extend({
         routes: {
