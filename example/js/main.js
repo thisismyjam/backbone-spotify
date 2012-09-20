@@ -40,14 +40,12 @@ var Router = BackboneSpotify.Router.extend({
     },
 
     index: function() {
-        this.view = new IndexView();
-        $('.content').html(this.view.$el);
+        this.restore(new IndexView());
         this.view.render();
     },
 
     other: function() {
-        this.view = new OtherView();
-        $('.content').html(this.view.$el);
+        this.restore(new OtherView());
         this.view.render();
     },
 
