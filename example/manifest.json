@@ -1,0 +1,27 @@
+{
+    "BundleType": "Application",
+    "BundleIdentifier": "example",
+    "AppIcon": {
+        "36x18": "tutorial.png"
+    },
+    "AppName": {
+        "en": "backbone-spotify Example"
+    },
+    "SupportedLanguages": [
+        "en"
+    ],
+    "DefaultTabs": [
+        {
+            "arguments": "index",
+            "title": {
+                "en": "Home"
+            }
+        },
+        {
+            "arguments": "other",
+            "title": {
+                "en": "Other page"
+            }
+        }
+    ]
+}
