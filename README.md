@@ -80,4 +80,10 @@ This is a basic example of a router that uses the history stack:
     });
 
 
+Contributors
+------------
+
+ - [Ben Firshman](https://github.com/bfirsh)
+ - [Andreas Jansson](https://github.com/andreasjansson)
+
 
