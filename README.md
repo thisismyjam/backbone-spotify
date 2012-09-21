@@ -79,6 +79,10 @@ This is a basic example of a router that uses the history stack:
         },
     });
 
+Test suite
+----------
+
+Open up `test/index.html` in a browser.
 
 Contributors
 ------------
