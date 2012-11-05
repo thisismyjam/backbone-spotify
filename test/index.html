@@ -18,9 +18,8 @@
   <script>
     $(function(){
       window.expect = chai.expect;
-      mocha
-        //.globals([])
-        .run()
+      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }
     })
   </script>
 </head>
