@@ -1,6 +1,8 @@
 backbone-spotify
 ================
 
+[![Build Status](https://secure.travis-ci.org/thisismyjam/backbone-spotify.png)](http://travis-ci.org/thisismyjam/backbone-spotify)
+
 A library for writing [Spotify apps](https://developer.spotify.com/technologies/apps/) with [Backbone](http://backbonejs.org).
 
 It currently includes ``BackboneSpotify.Router`` and ``BackboneSpotify.History``, replacements for Backbone's ``Router`` and ``History``.
