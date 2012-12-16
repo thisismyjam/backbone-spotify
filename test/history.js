@@ -17,6 +17,11 @@ var LocationMock = function() {
   this.assign = sinon.spy();
 };
 
+var CoreMock = function() {}
+CoreMock.prototype = {
+  uri: 'spotify:app:test'
+}
+
 var ViewMock = Backbone.View.extend({
   initialize: function() {
     this.restore = sinon.spy();
@@ -25,15 +30,17 @@ var ViewMock = Backbone.View.extend({
 })
 
 describe('BackboneSpotify.History', function() {
-  var history, models, location, router;
+  var history, models, location, router, core;
 
   beforeEach(function() {
     // Set up history
     models = new ModelsMock();
     location = new LocationMock(),
+    core = new CoreMock();
     history = Backbone.history = new BackboneSpotify.History({
       models: models,
       location: location,
+      core: core,
     });
 
     // Set up router
@@ -215,6 +222,19 @@ describe('BackboneSpotify.History', function() {
           })
         })
       })
+    })
+  })
+
+  describe('navigate', function() {
+    it('assigns a new location', function() {
+      history.navigate('index')
+      expect(location.assign.called).to.be.true
+      expect(location.assign.args[0][0]).to.equal('spotify:app:test:index')
+    })
+    it('navigates to the root uri with no fragment', function() {
+      history.navigate()
+      expect(location.assign.called).to.be.true
+      expect(location.assign.args[0][0]).to.equal('spotify:app:test')
     })
   })
 })

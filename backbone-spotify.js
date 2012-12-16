@@ -25,6 +25,7 @@
     if (!this.models) {
       this.models = getSpotifyApi(1).require('sp://import/scripts/api/models');
     }
+    this.core = options.core || getSpotifyApi(1).core;
 
     if (options.debug) {
       this.debug = _.bind(console.debug, console);
@@ -170,10 +171,10 @@
     navigate: function(fragment) {
       var l;
       if (fragment) {
-        l = conf.URI + ':' + fragment;
+        l = this.core.uri + ':' + fragment;
       }
       else {
-        l = conf.URI;
+        l = this.core.uri;
       }
       this.location.assign(l);
     },
