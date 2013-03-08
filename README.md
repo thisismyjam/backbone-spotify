@@ -35,11 +35,15 @@ Example:
 ``BackboneSpotify.History``
 ---------------------------
 
-This is a completely rewritten version of Backbone's history designed to work with Spotify's URIs and ``ARGUMENTSCHANGED`` event. You can use it in the same way as Backbone's history:
-
-    Backbone.history = new BackboneSpotify.History();
-    var router = new Router();
-    Backbone.history.start();
+This is a completely rewritten version of Backbone's history designed to work with Spotify's URIs and ``ARGUMENTSCHANGED`` event. It needs to be passed a Spotify application object which has the `arguments` and `uri` properties loaded. You can then use it in the same way as Backbone's history:
+    
+    require('$api/models', function(models) {
+      models.application.load(['arguments', 'uri']).done(function(application) {
+        Backbone.history = new BackboneSpotify.History();
+        var router = new Router();
+        Backbone.history.start();
+      });
+    });
 
 It's a bit smarter than the normal Backbone history, though. It keeps a stack of visited pages, similar to how a normal browser does. When you navigate to a new page, a reference to the view on the previous page is kept so it can be restored when you press the back button. (The example app shows you how to to restore scroll position with this.)
 
@@ -86,10 +90,23 @@ Test suite
 
 Open up `test/index.html` in a browser.
 
+Change log
+----------
+
+### 1.1.0
+
+ - Support for [Spotify apps API 1.0.0](https://developer.spotify.com/technologies/apps/upgrade-guide/1.0.0).
+
+### 1.0.0
+
+ - Initial release.
+
+
 Contributors
 ------------
 
  - [Ben Firshman](https://github.com/bfirsh)
  - [Andreas Jansson](https://github.com/andreasjansson)
+ - [Tom Jakubowski](https://github.com/tomjakubowski)
 
 

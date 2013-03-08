@@ -56,9 +56,9 @@ var Router = BackboneSpotify.Router.extend({
 });
 
 $(function() {
-    require('$api/models', function(spModels) {
-      spModels.application.load(['arguments', 'uri']).done(function(app) {
-        Backbone.history = new BackboneSpotify.History({application: app, debug: true});
+    require('$api/models', function(models) {
+      models.application.load(['arguments', 'uri']).done(function(application) {
+        Backbone.history = new BackboneSpotify.History({application: application, debug: true});
         var router = new Router();
         Backbone.history.start();
       });
