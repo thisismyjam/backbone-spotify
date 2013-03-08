@@ -39,7 +39,7 @@ This is a completely rewritten version of Backbone's history designed to work wi
     
     require('$api/models', function(models) {
       models.application.load(['arguments', 'uri']).done(function(application) {
-        Backbone.history = new BackboneSpotify.History();
+        Backbone.history = new BackboneSpotify.History({application: application});
         var router = new Router();
         Backbone.history.start();
       });
