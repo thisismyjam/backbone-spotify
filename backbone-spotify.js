@@ -1,4 +1,4 @@
-// backbone-spotify 1.0.0
+// backbone-spotify 1.1.0
 // vim: ts=2:sw=2:sts=2
 
 (function(undefined) {
