@@ -24,7 +24,7 @@ var IndexView = Backbone.View.extend({
 
     onScroll: _.throttle(function() {
         this._scrollPosition = $(window).scrollTop();
-    }, 250),
+    }, 250)
 });
 
 var OtherView = Backbone.View.extend({
@@ -56,9 +56,13 @@ var Router = BackboneSpotify.Router.extend({
 });
 
 $(function() {
-    Backbone.history = new BackboneSpotify.History({debug: true});
-    var router = new Router();
-    Backbone.history.start();
+    require('$api/models', function(spModels) {
+      spModels.application.load(['arguments', 'uri']).done(function(app) {
+        Backbone.history = new BackboneSpotify.History({application: app, debug: true});
+        var router = new Router();
+        Backbone.history.start();
+      });
+    });
 });
 
 

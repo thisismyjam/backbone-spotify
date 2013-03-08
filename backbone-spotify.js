@@ -21,11 +21,15 @@
     _.bindAll(this, 'checkUrl', 'onRoute');
     options = options || {};
     this.location = options.location || window.location;
-    this.models = options.models;
-    if (!this.models) {
-      this.models = getSpotifyApi(1).require('sp://import/scripts/api/models');
+    this.application = options.application;
+    if (!this.application) {
+      throw new Error('options.application is required');
     }
-    this.core = options.core || getSpotifyApi(1).core;
+    if (!this.application.uri || !this.application.arguments) {
+      throw new Error('options.application must have uri and arguments ' +
+                      'properties (you might need to call options.' +
+                      'application.load([\'arguments\', \'uri\']))');
+    }
 
     if (options.debug) {
       this.debug = _.bind(console.debug, console);
@@ -51,8 +55,8 @@
       this.options = options || {};
       this.fragment = this.getFragment();
 
-      this.models.application.observe(
-        this.models.EVENT.ARGUMENTSCHANGED, 
+      this.application.addEventListener(
+        'arguments',
         this.checkUrl
       );
       this.on('route', this.onRoute)
@@ -63,8 +67,8 @@
     },
 
     stop: function() {
-      this.models.application.ignore(
-        this.models.EVENT.ARGUMENTSCHANGED, 
+      this.application.removeEventListener(
+        'arguments',
         this.checkUrl
       );
       this.off('route', this.onRoute);
@@ -75,7 +79,7 @@
 
     getFragment: function(fragment) {
       if (fragment) return fragment;
-      return this.models.application.arguments.join(':');
+      return this.application.arguments.join(':');
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -85,7 +89,7 @@
       if (current == this.fragment) return false;
       this.loadUrl();
     },
-    
+
     loadUrl: function(fragmentOverride) {
       this.fragment = this.getFragment(fragmentOverride);
       this.debug('Loading', this.fragment);
@@ -95,7 +99,7 @@
       // Forward button?
       var next = this.next();
       if (next && next.fragment == this.fragment) {
-        // Clear out a stale view 
+        // Clear out a stale view
         if (next.stale) {
           // We clear at this point because it will get recreated
           // immediately by loadUrl
@@ -117,7 +121,7 @@
       // Back button?
       var previous = this.previous();
       if (previous && previous.fragment == this.fragment) {
-        // Clear out a stale view 
+        // Clear out a stale view
         if (previous.stale) {
           // We clear at this point because it will get recreated
           // immediately by loadUrl
@@ -171,10 +175,10 @@
     navigate: function(fragment) {
       var l;
       if (fragment) {
-        l = this.core.uri + ':' + fragment;
+        l = this.application.uri + ':' + fragment;
       }
       else {
-        l = this.core.uri;
+        l = this.application.uri;
       }
       this.location.assign(l);
     },
@@ -191,7 +195,7 @@
       return this.stack[this.stackPosition + 1];
     },
 
-    // Close any views after stackPosition and prune any old views 
+    // Close any views after stackPosition and prune any old views
     clearNext: function() {
       var closed = this.stack.slice(this.stackPosition + 1);
       _.each(closed, function(item) {
@@ -257,7 +261,7 @@
     // and hitting back again would give
     //   people -> people:jane -> people:john -> people
     // so we'd never get back to the original people view
-    //  
+    //
     markStale: function(view) {
       _.each(this.stack, function(item) {
         if (item.view === view) {

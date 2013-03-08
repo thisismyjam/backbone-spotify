@@ -1,26 +1,21 @@
 // vim: ts=2:sw=2:sts=2
 
-var ModelsMock = function() {
-  this.application.observe = sinon.spy();
-  this.application.ignore = sinon.spy();
+var ApplicationMock = function() {
+  this.addEventListener = sinon.spy();
+  this.removeEventListener = sinon.spy();
 };
-ModelsMock.prototype = {
-  EVENT: {
-    ARGUMENTSCHANGED: 1
-  },
-  application: {
-    arguments: ['index'],
+ApplicationMock.prototype = {
+  load: function(args) {
+    if (args.indexOf('arguments') > -1)
+      this.arguments = ['index'];
+    if (args.indexOf('uri') > -1)
+      this.uri = 'spotify:app:test';
   }
 };
 
 var LocationMock = function() {
   this.assign = sinon.spy();
 };
-
-var CoreMock = function() {}
-CoreMock.prototype = {
-  uri: 'spotify:app:test'
-}
 
 var ViewMock = Backbone.View.extend({
   initialize: function() {
@@ -30,17 +25,16 @@ var ViewMock = Backbone.View.extend({
 })
 
 describe('BackboneSpotify.History', function() {
-  var history, models, location, router, core;
+  var history, application, location, router, core;
 
   beforeEach(function() {
     // Set up history
-    models = new ModelsMock();
+    application = new ApplicationMock();
     location = new LocationMock(),
-    core = new CoreMock();
+    application.load(['arguments', 'uri']);
     history = Backbone.history = new BackboneSpotify.History({
-      models: models,
-      location: location,
-      core: core,
+      application: application,
+      location: location
     });
 
     // Set up router
@@ -59,7 +53,33 @@ describe('BackboneSpotify.History', function() {
     router = new Router();
     router.view = new ViewMock();
   });
-  
+
+  describe('constructor', function() {
+    context('when it is called without options.application set', function() {
+      it('should throw an error', function() {
+        var badConstructor = function() {
+          history = Backbone.history = new BackboneSpotify.History({
+            location: location
+          });
+        };
+        expect(badConstructor).to.throw(Error, /application.*required/);
+      });
+    });
+
+    context('when it is called and options.application is not yet loaded', function() {
+      it('should throw an error', function() {
+        var badApplication = function() {
+          application = new ApplicationMock();
+          history = Backbone.history = new BackboneSpotify.History({
+            application: application,
+            location: location
+          });
+        };
+        expect(badApplication).to.throw(Error, /application.*load/);
+      });
+    });
+  });
+
   describe('start', function() {
     context('when it is called without options', function() {
       beforeEach(function() {
@@ -69,9 +89,9 @@ describe('BackboneSpotify.History', function() {
         expect(history.started).to.be.true
       })
       it('binds to changes in Spotify\'s arguments', function() {
-        expect(models.application.observe.called).to.be.true
-        expect(models.application.observe.args[0][0]).to.equal(models.EVENT.ARGUMENTSCHANGED)
-        expect(models.application.observe.args[0][1]).to.equal(history.checkUrl)
+        expect(application.addEventListener.called).to.be.true
+        expect(application.addEventListener.args[0][0]).to.equal('arguments')
+        expect(application.addEventListener.args[0][1]).to.equal(history.checkUrl)
       })
       it('triggers the initial route', function() {
         expect(router.index.called).to.be.true
@@ -95,11 +115,11 @@ describe('BackboneSpotify.History', function() {
 
   describe('getFragment', function() {
     it('returns a single argument', function() {
-      models.application.arguments = ['index']
+      application.arguments = ['index']
       expect(history.getFragment()).to.equal('index')
     })
     it('joins together multiple arguments with colons', function() {
-      models.application.arguments = ['foo', 'bar']
+      application.arguments = ['foo', 'bar']
       expect(history.getFragment()).to.equal('foo:bar')
     })
   })
@@ -145,7 +165,7 @@ describe('BackboneSpotify.History', function() {
           expect(router.freeze.called).to.be.true
           expect(router.freeze.args[0][0]).to.equal(router.view)
         })
-      
+
         context('when "index" is loaded', function() {
           beforeEach(function() {
             router.index.reset()
